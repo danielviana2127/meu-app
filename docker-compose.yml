@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: app-pro-container
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  postgres:
+    container_name: postgres-db
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: meuuser
+      POSTGRES_PASSWORD: minhasenha
+      POSTGRES_DB: meubanco
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
