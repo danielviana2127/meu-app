@@ -20,10 +20,23 @@ jobs:
       - name: Subir containers
         run: docker compose up -d --build
 
-      - name: Aguardar serviços
-        run: sleep 30
+      - name: Aguardar aplicação ficar saudável
+        run: |
+          echo "Aguardando healthcheck do container..."
+          for i in {1..15}; do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' meu-app-app || true)
+            echo "Status: $STATUS"
+            if [ "$STATUS" = "healthy" ]; then
+              echo "Aplicação saudável!"
+              exit 0
+            fi
+            sleep 4
+          done
+          echo "Aplicação não ficou saudável"
+          docker compose logs
+          exit 1
 
-      - name: Garantir permissão scripts
+      - name: Garantir permissão dos scripts
         run: chmod +x scripts/*.sh
 
       - name: Executar testes
