@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-URL="http://localhost:8000"
+URL="http://app:5000"
 
 echo "Testando aplicação em $URL"
 
