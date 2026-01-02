@@ -19,18 +19,29 @@ jobs:
 
       - name: Aguardar app ficar saudável
         run: |
+          echo "⏳ Aguardando healthcheck do container..."
           for i in {1..20}; do
-            STATUS=$(docker inspect --format='{{.State.Health.Status}}' app-pro-container)
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' app-pro-container 2>/dev/null || echo "starting")
+
             if [ "$STATUS" = "healthy" ]; then
-              echo "✅ App saudável"
-              exit 0
+              echo "🟢 App está saudável!"
+              break
             fi
-            echo "⏳ Aguardando app..."
+
+            echo "⌛ Status atual: $STATUS"
             sleep 3
           done
-          echo "❌ App não ficou saudável"
-          docker compose logs
-          exit 1
+
+          if [ "$STATUS" != "healthy" ]; then
+            echo "❌ App não ficou saudável"
+            docker compose logs
+            exit 1
+          fi
+
+      - name: Testar endpoint da aplicação
+        run: |
+          echo "🌐 Testando endpoint http://localhost:5000"
+          curl -f http://localhost:5000
 
       - name: Derrubar containers
         if: always()

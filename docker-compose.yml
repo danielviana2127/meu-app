@@ -2,40 +2,34 @@ version: "3.9"
 
 services:
   app:
-    build: .
     container_name: app-pro-container
+    build: .
     ports:
       - "5000:5000"
     depends_on:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_NAME: meubanco
-      DATABASE_USER: meuuser
-      DATABASE_PASSWORD: minhasenha
+      DB_HOST: postgres
+      DB_USER: meuuser
+      DB_PASSWORD: minhasenha
+      DB_NAME: meubanco
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres:
-    image: postgres:15
     container_name: postgres-db
+    image: postgres:15
     environment:
-      POSTGRES_DB: meubanco
       POSTGRES_USER: meuuser
       POSTGRES_PASSWORD: minhasenha
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+      POSTGRES_DB: meubanco
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U meuuser"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
-      retries: 10
-
-volumes:
-  pgdata:
+      retries: 5
 
