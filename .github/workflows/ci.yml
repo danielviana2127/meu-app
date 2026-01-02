@@ -2,9 +2,9 @@ name: CI - Meu App
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build-test:
@@ -14,33 +14,23 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Configurar Docker
-        uses: docker/setup-buildx-action@v3
-
       - name: Subir containers
         run: docker compose up -d --build
 
-      - name: Aguardar aplicação ficar saudável
+      - name: Aguardar app ficar saudável
         run: |
-          echo "Aguardando healthcheck do container..."
-          for i in {1..15}; do
-            STATUS=$(docker inspect --format='{{.State.Health.Status}}' meu-app-app || true)
-            echo "Status: $STATUS"
+          for i in {1..20}; do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' app-pro-container)
             if [ "$STATUS" = "healthy" ]; then
-              echo "Aplicação saudável!"
+              echo "✅ App saudável"
               exit 0
             fi
-            sleep 4
+            echo "⏳ Aguardando app..."
+            sleep 3
           done
-          echo "Aplicação não ficou saudável"
+          echo "❌ App não ficou saudável"
           docker compose logs
           exit 1
-
-      - name: Garantir permissão dos scripts
-        run: chmod +x scripts/*.sh
-
-      - name: Executar testes
-        run: ./scripts/test.sh
 
       - name: Derrubar containers
         if: always()

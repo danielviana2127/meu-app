@@ -1,17 +1,15 @@
 #!/bin/bash
 set -e
 
-URL="http://app:5000"
+URL="http://localhost:5000"
 
 echo "Testando aplicação em $URL"
 
-STATUS=$(curl -o /dev/null -s -w "%{http_code}" $URL)
+for i in {1..10}; do
+  STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000 || true)
 
-if [ "$STATUS" -ne 200 ]; then
-  echo "❌ Aplicação não respondeu corretamente (status $STATUS)"
-  docker compose logs
-  exit 1
-fi
-
-echo "✅ Aplicação respondeu com HTTP 200"
+  if [ "$STATUS" = "200" ]; then exit 0; fi
+  sleep 3
+done
+exit 1
 
