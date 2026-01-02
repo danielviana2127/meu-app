@@ -1,127 +1,158 @@
-📦 Meu App Python com PostgreSQL usando Docker
+# Meu App — Projeto DevOps com Docker e CI
 
-Este projeto é uma aplicação Python (Flask) totalmente conteinerizada utilizando Docker e Docker Compose, com um banco de dados PostgreSQL integrado.
-Ele faz parte do meu estudo prático na área de DevOps, explorando criação de imagens, orquestração de serviços e boas práticas de containerização.
+Este repositório contém um projeto prático com foco em **DevOps**, demonstrando a construção de uma aplicação containerizada com **Python + PostgreSQL**, além da configuração de um pipeline de **Integração Contínua (CI)** utilizando **GitHub Actions**.
 
-🚀 Tecnologias Utilizadas
+O objetivo principal é demonstrar boas práticas de versionamento, containers, orquestração com Docker Compose e validação automática via CI.
 
-Python 3.10
+---
 
-Flask
+## 🧪 Tecnologias utilizadas
 
-PostgreSQL 15
+* **Python (Flask)** — aplicação web
+* **PostgreSQL** — banco de dados relacional
+* **Docker** — containerização da aplicação
+* **Docker Compose** — orquestração dos serviços
+* **GitHub Actions** — pipeline de CI
+* **Bash / Curl** — validações automatizadas
 
-psycopg2-binary
+---
 
-Docker
+## 🏗️ Arquitetura do projeto
 
-Docker Compose
+O ambiente é composto por dois serviços principais:
 
-📁 Estrutura do Projeto
-meu-app-python-pro/
-│
-├── app.py
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── .dockerignore
+* **app**
 
-Função de cada arquivo
-Arquivo	Descrição
-app.py	Código principal da aplicação Flask, incluindo conexão com o PostgreSQL.
-Dockerfile	Define como a imagem personalizada da aplicação Python é construída.
-docker-compose.yml	Orquestra os containers (aplicação + banco de dados).
-requirements.txt	Lista de dependências do projeto Python.
-.dockerignore	Arquivos que o Docker deve ignorar ao construir a imagem.
-🐳 Como Executar o Projeto com Docker Compose
+  * Aplicação Python
+  * Expõe a porta `5000`
+  * Possui healthcheck configurado
 
-Antes de tudo, certifique-se de que o Docker está instalado.
+* **postgres**
 
-🔹 1. Build e inicialização dos containers
-docker compose up --build -d
+  * Banco PostgreSQL
+  * Comunicação interna via rede Docker
 
-🔹 2. Verificar containers rodando
-docker ps
+Fluxo geral:
 
+1. Containers são criados via Docker Compose
+2. A aplicação aguarda o banco ficar saudável
+3. O app conecta ao PostgreSQL
+4. O endpoint principal é validado
 
-Você deve ver:
+---
 
-app-pro-container
+## 🚀 Como rodar o projeto localmente
 
-postgres-db
+### Pré-requisitos
 
-🌐 Acessar a Aplicação
+* Docker
+* Docker Compose
 
-Acesse em:
+### Passo a passo
 
-👉 http://localhost:5000
+Clone o repositório:
 
-Se tudo estiver funcionando, você verá:
+```bash
+git clone https://github.com/danielviana2127/meu-app.git
+cd meu-app
+```
 
-Conexão com PostgreSQL bem-sucedida!
+Suba os containers:
 
-🛢️ Credenciais do Banco de Dados
+```bash
+docker compose up --build
+```
 
-Definidas no docker-compose.yml:
+Acesse a aplicação:
 
-Variável	Valor
-POSTGRES_USER	meuuser
-POSTGRES_PASSWORD	minhasenha
-POSTGRES_DB	meudb
-Porta	5432
-🗄️ Acessar o Banco via Terminal
-
-Execute:
-
-docker exec -it postgres-db psql -U meuuser -d meudb
-
-💡 Comandos Docker Úteis
-Parar os containers:
-docker compose down
-
-Reiniciar:
-docker compose restart
-
-Ver logs do app:
-docker logs app-pro-container
-
-🧪 Teste Rápido da Aplicação
+```bash
 curl http://localhost:5000
+```
 
+Ou pelo navegador:
 
-Resposta esperada:
+```
+http://localhost:5000
+```
 
-Conexão com PostgreSQL bem-sucedida!
+---
 
-🎯 Objetivo do Projeto
+## 🔎 Healthcheck
 
-Este projeto faz parte do meu estudo para me tornar um profissional na área de DevOps, aprendendo:
+A aplicação possui healthcheck configurado no container, garantindo que o serviço só seja considerado saudável após estar totalmente operacional.
 
-Containerização (Docker)
+Você pode validar com:
 
-Orquestração (Docker Compose)
+```bash
+docker ps
+docker inspect --format='{{.State.Health.Status}}' meu-app-app-1
+```
 
-Integração entre serviços
+---
 
-Deploy local com infraestrutura mínima
+## ⚙️ Pipeline de Integração Contínua (CI)
 
-Boas práticas de versionamento e organização
+O pipeline está definido em:
 
-🔮 Próximos Passos
+```
+.github/workflows/ci.yml
+```
 
-Criar pipeline CI/CD (GitHub Actions)
+O CI executa automaticamente:
 
-Publicar a imagem no Docker Hub
+1. Checkout do código
+2. Build das imagens Docker
+3. Subida dos containers
+4. Aguardar healthcheck da aplicação
+5. Teste do endpoint com `curl`
+6. Finalização e limpeza do ambiente
 
-Deploy em Kubernetes
+Status atual do pipeline: ✅ **Passing**
 
-Deploy em Cloud (AWS, Azure ou GCP)
+---
 
-Monitoramento com Prometheus e Grafana
+## 📁 Estrutura do projeto
 
-Infraestrutura como Código (Terraform)
+```text
+meu-app/
+├── app/
+│   ├── app.py
+│   ├── requirements.txt
+│   └── Dockerfile
+├── docker-compose.yml
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+└── README.md
+```
 
-👨‍💻 Autor
+---
+
+## 🎯 Objetivo do projeto
+
+Este projeto foi criado com foco em aprendizado e demonstração prática de:
+
+* Containers e redes Docker
+* Dependência entre serviços
+* Healthchecks
+* Automação com GitHub Actions
+* Boas práticas de CI para aplicações containerizadas
+
+---
+
+## 🔮 Próximos passos (ideias de evolução)
+
+* Adicionar testes automatizados
+* Observabilidade (Prometheus / Grafana)
+* Deploy em ambiente cloud
+* Orquestração com Kubernetes
+
+---
+
+## 👤 Autor
 
 Daniel Viana
-DevOps Student • Python • Docker • Cloud • Automation
+
+---
+
+📌 *Este repositório faz parte do meu portfólio técnico com foco em DevOps.*
