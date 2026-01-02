@@ -1,0 +1,32 @@
+name: CI - Meu App
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Subir containers
+        run: docker compose up -d --build
+
+      - name: Aguardar serviços
+        run: sleep 20
+
+      - name: Executar testes
+        run: ./scripts/test.sh
+
+      - name: Derrubar containers
+        if: always()
+        run: docker compose down
+
