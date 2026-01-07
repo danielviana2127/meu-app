@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: meu-app-service
 spec:
+  type: NodePort
   selector:
     app: meu-app
   ports:
     - port: 80
       targetPort: 5000
-  type: ClusterIP
 
