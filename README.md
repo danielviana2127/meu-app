@@ -1,176 +1,148 @@
-# 🚀 Projeto DevOps – meu-app
+# 🚀 Projeto DevOps — Aplicação Containerizada com CI/CD e Kubernetes
 
-Aplicação de exemplo desenvolvida com foco em **práticas DevOps**, cobrindo desde containerização com Docker até deploy em **Kubernetes (Minikube)**, incluindo **CI com GitHub Actions**.
+Este repositório demonstra a construção de um **pipeline DevOps completo**, desde o desenvolvimento local até o deploy em Kubernetes, utilizando boas práticas de **containerização, CI/CD, infraestrutura declarativa e observabilidade básica**.
 
-Este repositório foi criado com o objetivo de **estudo, prática e portfólio**, demonstrando um fluxo completo de desenvolvimento e entrega de aplicações.
-
----
-
-## 📌 Visão Geral
-
-O projeto consiste em uma aplicação web simples que se conecta a um banco de dados **PostgreSQL**, empacotada em contêineres Docker e implantada em um cluster Kubernetes local.
-
-Ele demonstra:
-
-* Criação de imagens Docker
-* Orquestração com Docker Compose
-* Deploy em Kubernetes
-* Uso de ConfigMap e Secret
-* Exposição de serviços
-* CI automatizado
+> 🎯 **Objetivo**: servir como **projeto de portfólio DevOps**, demonstrando habilidades práticas exigidas pelo mercado.
 
 ---
 
-## 🧱 Arquitetura
+## 🧱 Visão Geral da Arquitetura
 
-* **Aplicação Web** (container Docker)
-* **PostgreSQL** (container dedicado)
-* **Kubernetes (Minikube)** para orquestração
-* **GitHub Actions** para CI
+**Fluxo do projeto:**
+
+1. Aplicação desenvolvida em container Docker
+2. Orquestração local com Docker Compose
+3. Pipeline de CI validando build e saúde da aplicação
+4. Deploy em Kubernetes (Minikube)
+5. Exposição via Service e Ingress
+6. Configuração externa via ConfigMap e Secret
+
+```
+[Dev] → Docker → CI → Kubernetes → Service → Ingress → Browser
+```
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-* Docker
-* Docker Compose
-* Kubernetes
-* Minikube
-* PostgreSQL
-* GitHub Actions
-* Linux / WSL
+* **Linux / Shell Script**
+* **Git & GitHub**
+* **Docker & Docker Compose**
+* **GitHub Actions (CI)**
+* **Kubernetes (kubectl, Deployment, Service, Ingress)**
+* **PostgreSQL**
+* **ConfigMap & Secret**
 
 ---
 
-## 📂 Estrutura do Projeto
+## 📂 Estrutura do Repositório
 
-```text
+```
 meu-app/
-├── app/
-│   ├── Dockerfile
-│   ├── index.html
-│   └── nginx.conf
-│
-├── ci/
-│   ├── rbac.yaml
-│   └── README.md
-│
-├── k8s/
-│   ├── app/
-│   │   ├── deployment.yaml
-│   │   ├── service.yaml
-│   │   ├── configmap.yaml
-│   │   └── secret.yaml
-│   ├── postgres/
-│   │   ├── postgres-deployment.yaml
-│   │   └── postgres-service.yaml
-│   └── ingress.yaml
-│
+├── app/                  # Código da aplicação
+├── scripts/              # Scripts de teste e automação
+├── k8s/                  # Manifests Kubernetes
+│   ├── app/              # Deployment e Service da aplicação
+│   ├── postgres/         # Deployment e Service do PostgreSQL
+│   ├── ci/               # RBAC e configs de CI
+│   └── ingress.yaml      # Ingress NGINX
+├── docker-compose.yml
+├── Dockerfile
 └── README.md
 ```
 
 ---
 
-## 🐳 Executando com Docker Compose
+## 🧪 Executando Localmente (Docker)
 
 ```bash
-docker-compose up -d
+docker compose up -d --build
 ```
 
-A aplicação ficará disponível conforme definido no `docker-compose.yml`.
+Acesse:
+
+```
+http://localhost:5000
+```
 
 ---
 
-## ☸️ Kubernetes com Minikube
+## 🔄 Pipeline de CI (GitHub Actions)
 
-Este projeto também pode ser executado em um cluster Kubernetes local utilizando **Minikube**.
+O pipeline realiza:
 
-### ▶️ Iniciando o Minikube
+* Build da imagem Docker
+* Subida dos containers
+* Healthcheck da aplicação
+* Validação automática antes do merge
+
+📁 Local: `.github/workflows/ci.yml`
+
+---
+
+## ☸️ Deploy em Kubernetes (Minikube)
+
+### 1️⃣ Iniciar o cluster
 
 ```bash
 minikube start
 ```
 
-### 📦 Aplicando os manifests
+### 2️⃣ Aplicar os manifests
 
 ```bash
-kubectl apply -f k8s/postgres
-kubectl apply -f k8s/app
+kubectl apply -f k8s/
 ```
 
-Isso criará:
+### 3️⃣ Verificar recursos
 
-* Deployment e Service do PostgreSQL
-* Deployment e Service da aplicação
-* ConfigMap e Secret
+```bash
+kubectl get pods
+kubectl get svc
+kubectl get ingress
+```
 
 ---
 
-### 🌐 Acessando a aplicação
+## 🌐 Acesso à Aplicação
 
-Em ambientes **Windows + WSL**, a forma mais confiável de acesso é usando:
+Durante o desenvolvimento local, o acesso pode ser feito via:
 
 ```bash
 minikube service meu-app-service
 ```
 
-O Minikube abrirá automaticamente o navegador com o endereço correto.
-
-> ℹ️ O uso de Ingress pode variar conforme o ambiente local e permissões de rede.
+Ou utilizando **Ingress NGINX** para simular ambiente real de produção.
 
 ---
 
-## 🔐 ConfigMap e Secret
+## 🔐 Configurações Sensíveis
 
-* **ConfigMap**: variáveis de configuração da aplicação
-* **Secret**: credenciais do banco PostgreSQL
+* **ConfigMap**: variáveis de ambiente da aplicação
+* **Secret**: credenciais do banco de dados
 
-Ambos são consumidos pelo Deployment da aplicação seguindo boas práticas de segurança.
-
----
-
-## 🔄 CI – GitHub Actions
-
-O projeto conta com um pipeline de **Integração Contínua**, responsável por:
-
-* Validar o código
-* Build da imagem Docker
-* Garantir consistência antes de deploy
-
-Os arquivos de CI estão localizados na pasta:
-
-```text
-ci/
-```
+Nenhuma credencial sensível real é versionada neste repositório.
 
 ---
 
-## 🎯 Objetivo do Projeto
+## 📈 Aprendizados Demonstrados
 
-Este projeto foi desenvolvido para:
-
-* Praticar conceitos DevOps na prática
-* Consolidar conhecimentos em Docker e Kubernetes
-* Servir como **projeto de portfólio**
-* Demonstrar capacidade de troubleshooting e documentação
-
----
-
-## 📌 Próximos Passos (Evolução)
-
-* Implementar pipeline CD
-* Publicar imagens no Docker Hub
-* Deploy em cluster Kubernetes em nuvem
-* Monitoramento com Prometheus e Grafana
+* Criação de pipelines CI confiáveis
+* Debug real de containers e Kubernetes
+* Uso correto de Service, Ingress e healthchecks
+* Separação de configuração e código
+* Versionamento profissional de projetos DevOps
 
 ---
 
 ## 👨‍💻 Autor
 
 **Daniel Viana**
-Projeto educacional para estudos em DevOps.
+Projeto desenvolvido com foco em **aprendizado prático e portfólio profissional DevOps**.
+
+🔗 GitHub: [https://github.com/danielviana2127](https://github.com/danielviana2127)
 
 ---
 
-⭐ Se este projeto te ajudou ou te inspirou, considere dar uma estrela no repositório!
+> ⭐ Se este projeto te ajudou ou te inspirou, deixe uma estrela no repositório!
 
