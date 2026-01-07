@@ -1,158 +1,176 @@
-# Meu App — Projeto DevOps com Docker e CI
+# 🚀 Projeto DevOps – meu-app
 
-Este repositório contém um projeto prático com foco em **DevOps**, demonstrando a construção de uma aplicação containerizada com **Python + PostgreSQL**, além da configuração de um pipeline de **Integração Contínua (CI)** utilizando **GitHub Actions**.
+Aplicação de exemplo desenvolvida com foco em **práticas DevOps**, cobrindo desde containerização com Docker até deploy em **Kubernetes (Minikube)**, incluindo **CI com GitHub Actions**.
 
-O objetivo principal é demonstrar boas práticas de versionamento, containers, orquestração com Docker Compose e validação automática via CI.
-
----
-
-## 🧪 Tecnologias utilizadas
-
-* **Python (Flask)** — aplicação web
-* **PostgreSQL** — banco de dados relacional
-* **Docker** — containerização da aplicação
-* **Docker Compose** — orquestração dos serviços
-* **GitHub Actions** — pipeline de CI
-* **Bash / Curl** — validações automatizadas
+Este repositório foi criado com o objetivo de **estudo, prática e portfólio**, demonstrando um fluxo completo de desenvolvimento e entrega de aplicações.
 
 ---
 
-## 🏗️ Arquitetura do projeto
+## 📌 Visão Geral
 
-O ambiente é composto por dois serviços principais:
+O projeto consiste em uma aplicação web simples que se conecta a um banco de dados **PostgreSQL**, empacotada em contêineres Docker e implantada em um cluster Kubernetes local.
 
-* **app**
+Ele demonstra:
 
-  * Aplicação Python
-  * Expõe a porta `5000`
-  * Possui healthcheck configurado
-
-* **postgres**
-
-  * Banco PostgreSQL
-  * Comunicação interna via rede Docker
-
-Fluxo geral:
-
-1. Containers são criados via Docker Compose
-2. A aplicação aguarda o banco ficar saudável
-3. O app conecta ao PostgreSQL
-4. O endpoint principal é validado
+* Criação de imagens Docker
+* Orquestração com Docker Compose
+* Deploy em Kubernetes
+* Uso de ConfigMap e Secret
+* Exposição de serviços
+* CI automatizado
 
 ---
 
-## 🚀 Como rodar o projeto localmente
+## 🧱 Arquitetura
 
-### Pré-requisitos
+* **Aplicação Web** (container Docker)
+* **PostgreSQL** (container dedicado)
+* **Kubernetes (Minikube)** para orquestração
+* **GitHub Actions** para CI
+
+---
+
+## 🛠️ Tecnologias Utilizadas
 
 * Docker
 * Docker Compose
-
-### Passo a passo
-
-Clone o repositório:
-
-```bash
-git clone https://github.com/danielviana2127/meu-app.git
-cd meu-app
-```
-
-Suba os containers:
-
-```bash
-docker compose up --build
-```
-
-Acesse a aplicação:
-
-```bash
-curl http://localhost:5000
-```
-
-Ou pelo navegador:
-
-```
-http://localhost:5000
-```
+* Kubernetes
+* Minikube
+* PostgreSQL
+* GitHub Actions
+* Linux / WSL
 
 ---
 
-## 🔎 Healthcheck
-
-A aplicação possui healthcheck configurado no container, garantindo que o serviço só seja considerado saudável após estar totalmente operacional.
-
-Você pode validar com:
-
-```bash
-docker ps
-docker inspect --format='{{.State.Health.Status}}' meu-app-app-1
-```
-
----
-
-## ⚙️ Pipeline de Integração Contínua (CI)
-
-O pipeline está definido em:
-
-```
-.github/workflows/ci.yml
-```
-
-O CI executa automaticamente:
-
-1. Checkout do código
-2. Build das imagens Docker
-3. Subida dos containers
-4. Aguardar healthcheck da aplicação
-5. Teste do endpoint com `curl`
-6. Finalização e limpeza do ambiente
-
-Status atual do pipeline: ✅ **Passing**
-
----
-
-## 📁 Estrutura do projeto
+## 📂 Estrutura do Projeto
 
 ```text
 meu-app/
 ├── app/
-│   ├── app.py
-│   ├── requirements.txt
-│   └── Dockerfile
-├── docker-compose.yml
-├── .github/
-│   └── workflows/
-│       └── ci.yml
+│   ├── Dockerfile
+│   ├── index.html
+│   └── nginx.conf
+│
+├── ci/
+│   ├── rbac.yaml
+│   └── README.md
+│
+├── k8s/
+│   ├── app/
+│   │   ├── deployment.yaml
+│   │   ├── service.yaml
+│   │   ├── configmap.yaml
+│   │   └── secret.yaml
+│   ├── postgres/
+│   │   ├── postgres-deployment.yaml
+│   │   └── postgres-service.yaml
+│   └── ingress.yaml
+│
 └── README.md
 ```
 
 ---
 
-## 🎯 Objetivo do projeto
+## 🐳 Executando com Docker Compose
 
-Este projeto foi criado com foco em aprendizado e demonstração prática de:
+```bash
+docker-compose up -d
+```
 
-* Containers e redes Docker
-* Dependência entre serviços
-* Healthchecks
-* Automação com GitHub Actions
-* Boas práticas de CI para aplicações containerizadas
+A aplicação ficará disponível conforme definido no `docker-compose.yml`.
 
 ---
 
-## 🔮 Próximos passos (ideias de evolução)
+## ☸️ Kubernetes com Minikube
 
-* Adicionar testes automatizados
-* Observabilidade (Prometheus / Grafana)
-* Deploy em ambiente cloud
-* Orquestração com Kubernetes
+Este projeto também pode ser executado em um cluster Kubernetes local utilizando **Minikube**.
+
+### ▶️ Iniciando o Minikube
+
+```bash
+minikube start
+```
+
+### 📦 Aplicando os manifests
+
+```bash
+kubectl apply -f k8s/postgres
+kubectl apply -f k8s/app
+```
+
+Isso criará:
+
+* Deployment e Service do PostgreSQL
+* Deployment e Service da aplicação
+* ConfigMap e Secret
 
 ---
 
-## 👤 Autor
+### 🌐 Acessando a aplicação
 
-Daniel Viana
+Em ambientes **Windows + WSL**, a forma mais confiável de acesso é usando:
+
+```bash
+minikube service meu-app-service
+```
+
+O Minikube abrirá automaticamente o navegador com o endereço correto.
+
+> ℹ️ O uso de Ingress pode variar conforme o ambiente local e permissões de rede.
 
 ---
 
-📌 *Este repositório faz parte do meu portfólio técnico com foco em DevOps.*
+## 🔐 ConfigMap e Secret
+
+* **ConfigMap**: variáveis de configuração da aplicação
+* **Secret**: credenciais do banco PostgreSQL
+
+Ambos são consumidos pelo Deployment da aplicação seguindo boas práticas de segurança.
+
+---
+
+## 🔄 CI – GitHub Actions
+
+O projeto conta com um pipeline de **Integração Contínua**, responsável por:
+
+* Validar o código
+* Build da imagem Docker
+* Garantir consistência antes de deploy
+
+Os arquivos de CI estão localizados na pasta:
+
+```text
+ci/
+```
+
+---
+
+## 🎯 Objetivo do Projeto
+
+Este projeto foi desenvolvido para:
+
+* Praticar conceitos DevOps na prática
+* Consolidar conhecimentos em Docker e Kubernetes
+* Servir como **projeto de portfólio**
+* Demonstrar capacidade de troubleshooting e documentação
+
+---
+
+## 📌 Próximos Passos (Evolução)
+
+* Implementar pipeline CD
+* Publicar imagens no Docker Hub
+* Deploy em cluster Kubernetes em nuvem
+* Monitoramento com Prometheus e Grafana
+
+---
+
+## 👨‍💻 Autor
+
+**Daniel Viana**
+Projeto educacional para estudos em DevOps.
+
+---
+
+⭐ Se este projeto te ajudou ou te inspirou, considere dar uma estrela no repositório!
+
