@@ -18,7 +18,7 @@ def index():
         cur = conn.cursor()
         cur.execute("SELECT version();")
         result = cur.fetchone()
-        return f"Conectado ao PostgreSQL: {result}"
+        return f"Meu App atualizado via Rolling Update 🔄🚀"
     except Exception as e:
         return f"Erro ao conectar: {e}"
 

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meu-app
+  labels:
+    app: meu-app
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: meu-app
+  template:
+    metadata:
+      labels:
+        app: meu-app
+    spec:
+      containers:
+        - name: meu-app
+          image: danielviana2127/meu-app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+
+          # 🔹 Variáveis vindas de ConfigMap e Secret
+          envFrom:
+            - configMapRef:
+                name: meu-app-config
+            - secretRef:
+                name: meu-app-secret
+
+          # 🔹 Health checks (produção)
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          # 🔹 Recursos (boa prática obrigatória)
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+
